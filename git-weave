@@ -168,13 +168,13 @@ def capture_or_die(dcmd, legend=""):
 
 def git_weave(indir, outdir, quiet=False):
     "Weave a tree sequence and associated logfile into a repository"
+    myname = capture_or_die("git config --get user.name")
+    myemail = capture_or_die("git config --get user.email")
     do_or_die("mkdir %s; git init -q %s" % (outdir, outdir))
     logfile = os.path.join(indir, "log")
     commit_id = {}
     state = 0
     parents = []
-    myname = capture_or_die("git config --get user.name")
-    myemail = capture_or_die("git config --get user.email")
     commit = tagname = label = refers_to = head = comment = ""
     committername = authorname = myname
     committeremail = authoremail = myemail
