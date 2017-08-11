@@ -236,7 +236,7 @@ def git_weave(indir, outdir, quiet=False):
                     os.chdir(outdir)
                     if commit:
                         if commitcount > 1:
-                            do_or_die("rm -f `git ls-tree -r --full-name --name-only HEAD`")
+                            do_or_die("rm -f `git ls-tree -r --name-only HEAD`")
                         if verbose > DEBUG_PROGRESS:
                             print("Copying")
                         os.chdir("%s/%s" % (indir, directory or commitcount))
