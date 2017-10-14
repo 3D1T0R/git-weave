@@ -1,5 +1,8 @@
 			NEWS file for git-weave
 
+1.3: 2017-10-14
+     Polyglotize the code and test under Python 3 as well as Python 2.
+
 1.2: 2016-02-18
      Make code indifferent to whether it's running under Python 2 or Pyton 3
 
