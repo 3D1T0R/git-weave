@@ -23,6 +23,47 @@ DEBUG_GENERAL  = 1
 DEBUG_PROGRESS = 2
 DEBUG_COMMANDS = 3
 
+import io
+
+binary_encoding = 'latin-1'
+
+if str is bytes:  # Python 2
+    
+    polystr = str
+    polybytes = bytes
+    polyord = ord
+    polychr = str
+
+else:  # Python 3
+    
+    def polystr(o):
+        if isinstance(o, str):
+            return o
+        if isinstance(o, bytes):
+            return str(o, encoding=binary_encoding)
+        raise ValueError
+
+    def polybytes(o):
+        if isinstance(o, bytes):
+            return o
+        if isinstance(o, str):
+            return bytes(o, encoding=binary_encoding)
+        raise ValueError
+
+    def polyord(c):
+        "Polymorphic ord() function"
+        if isinstance(c, str):
+            return ord(c)
+        else:
+            return c
+
+    def polychr(c):
+        "Polymorphic chr() function"
+        if isinstance(c, int):
+            return chr(c)
+        else:
+            return c
+
 class Fatal(Exception):
     "Unrecoverable error."
     def __init__(self, msg):
@@ -117,7 +158,7 @@ def capture_or_die(dcmd, legend=""):
     if verbose >= DEBUG_COMMANDS:
         sys.stdout.write("executing '%s'%s\n" % (dcmd, legend))
     try:
-        return subprocess.check_output(dcmd, shell=True).decode('ascii')
+        return polystr(subprocess.check_output(dcmd, shell=True))
     except subprocess.CalledProcessError as e:
         if e.returncode < 0:
             raise Fatal("child was terminated by signal %d." % -e.returncode)
@@ -142,7 +183,8 @@ def git_weave(indir, outdir, quiet=False):
     commitcount = 1
     linecount = 0
     with Baton("Weaving", enable=not quiet) as baton:
-        for line in open(logfile):
+        for line in open(logfile, "rb"):
+            line = polystr(line)
             if verbose > DEBUG_PROGRESS:
                 print("Looking at: '%s'" % repr(line))
             if state == 0:
@@ -216,8 +258,8 @@ def git_weave(indir, outdir, quiet=False):
                         if verbose > DEBUG_PROGRESS:
                             print("Tree ID is %s" % tree_id)
                         (_, commentfile) = tempfile.mkstemp()
-                        with open(commentfile, "w") as cfp:
-                            cfp.write(comment)
+                        with open(commentfile, "wb") as cfp:
+                            cfp.write(polybytes(comment))
                         command = "git commit-tree %s " % tree_id
                         command += " ".join(["-p " + commit_id[p] for p in parents])
                         command += "<'%s'" % commentfile
@@ -267,7 +309,8 @@ def git_ravel(indir, outdir, quiet=False):
         commit_map = {}
         os.chdir(indir)
         try:
-            for line in open(rawlogfile):
+            for line in open(rawlogfile, "rb"):
+                line = polystr(line)
                 baton.twirl()
                 if line.startswith("commit "):
                     commit = line.split()[1]
@@ -283,9 +326,10 @@ def git_ravel(indir, outdir, quiet=False):
         cooked = os.path.join(outdir, "log")
         body_latch = False
         try:
-            with open(cooked, "w") as wfp:
+            with open(cooked, "wb") as wfp:
                 linecount = 0
-                for line in open(rawlogfile):
+                for line in open(rawlogfile, "rb"):
+                    line = polystr(line)
                     linecount += 1
                     if line[0].isspace():
                         if line.startswith(" " * 4):
@@ -302,7 +346,7 @@ def git_ravel(indir, outdir, quiet=False):
                         if leader == "tree":
                             continue
                         if leader == "commit" and linecount > 1:
-                            wfp.write(".\n")
+                            wfp.write(polybytes(".\n"))
                         if leader in ("commit", "parent"):
                             line = "%s %s\n" % (leader, commit_map[follower])
                             body_latch = False
@@ -314,14 +358,14 @@ def git_ravel(indir, outdir, quiet=False):
                             body_latch = True
                         else:
                             continue
-                    wfp.write(line)
-                wfp.write(".\n")
+                    wfp.write(polybytes(line))
+                wfp.write(polybytes(".\n"))
                 # Append information about tags
                 for tagname in capture_or_die("git tag -l").split():
                     tagdata = capture_or_die("git show --format=raw %s" % tagname)
                     if tagdata.startswith("commit"):
                         commit = commit_map[tagdata.split("\n")[0].split()[1]]
-                        wfp.write("label %s\nrefers-to %s\n" % (tagname, commit))
+                        wfp.write(polybytes("label %s\nrefers-to %s\n" % (tagname, commit)))
                     elif tagdata.startswith("tag"):
                         for line in tagdata.split('\n'):
                             if line.startswith("commit"):
@@ -329,31 +373,32 @@ def git_ravel(indir, outdir, quiet=False):
                                 break
                         else:
                             raise Fatal("no commit line in annotated tag")
-                        wfp.write("tag %s\nrefers-to %s\n" % (tagname, commit_map[commit]))
+                        wfp.write(polybytes("tag %s\nrefers-to %s\n" % (tagname, commit_map[commit])))
                         stanza = capture_or_die("git cat-file -p " + tagname)
                         body_latch = False
                         for line in stanza.split("\n")[:-1]:
                             if not body_latch:
                                 if line == "":
                                     body_latch = True
-                                    wfp.write("\n")
+                                    wfp.write(polybytes("\n"))
                                 elif line.startswith("tagger"):
-                                    wfp.write(line + "\n")
+                                    wfp.write(polybytes(line + "\n"))
                             else:
                                 if line.startswith("."):
                                     line = "." + line
-                                wfp.write(line + "\n")
-                        wfp.write(".\n")
+                                wfp.write(polybytes(line + "\n"))
+                        wfp.write(polybytes(".\n"))
                 # And about heads too
                 for line in capture_or_die("git show-ref --head").split("\n"):
                     if line:
                         (hashid, ref) = line.strip().split()
                         if ref.startswith("refs/heads"):
                             ref = os.path.basename(ref)
-                            wfp.write("branch %s\nrefers-to %s\n" %
-                                      (ref, commit_map[hashid]))
+                            wfp.write(polybytes("branch %s\nrefers-to %s\n" %
+                                      (ref, commit_map[hashid])))
         except (ValueError, IndexError, KeyError):
-            raise Fatal("log rewrite failed on %s" % repr(line))
+            print("log rewrite failed on %s" % repr(line))
+            raise
     os.remove(rawlogfile)
 
 if __name__ == '__main__':
