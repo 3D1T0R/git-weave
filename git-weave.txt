@@ -13,13 +13,13 @@ SYNOPSIS
 DESCRIPTION
 -----------
 git-weave accepts an input directory containing a sequence of
-subdirectories and a metadata file, and composes them into a 
-git repository created under the specified output directory
+subdirectories and a metadata file (named "log"), and composes them
+into a git repository created under the specified output directory
 (which must not exist).
 
 If the input directory is identifiably a git repository, the weave
 operation is reversed; tree states from each commit are unraveled into
-the output directory with a log holding commit metadata
+the output directory with a "log" file holding commit metadata
 (committer/author/comment information and parent headers representing
 links of the repository DAG) and tags.
 
