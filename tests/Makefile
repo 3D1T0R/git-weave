@@ -1,6 +1,12 @@
 # Tests for git-weave
 
-test: roundtrip
+test:
+	@echo "Testing git-weave: no output is good news."
+	@setpython python2
+	@make roundtrip
+	@setpython python3
+	@make roundtrip
+	@setpython python
 
 roundtrip:
 	@for f in *.fi; \
