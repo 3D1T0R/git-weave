@@ -31,8 +31,6 @@ if str is bytes:  # Python 2
     
     polystr = str
     polybytes = bytes
-    polyord = ord
-    polychr = str
 
 else:  # Python 3
     
@@ -49,20 +47,6 @@ else:  # Python 3
         if isinstance(o, str):
             return bytes(o, encoding=binary_encoding)
         raise ValueError
-
-    def polyord(c):
-        "Polymorphic ord() function"
-        if isinstance(c, str):
-            return ord(c)
-        else:
-            return c
-
-    def polychr(c):
-        "Polymorphic chr() function"
-        if isinstance(c, int):
-            return chr(c)
-        else:
-            return c
 
 class Fatal(Exception):
     "Unrecoverable error."
