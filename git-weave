@@ -173,8 +173,9 @@ def git_weave(indir, outdir, quiet=False):
     with Baton("Weaving", enable=not quiet) as baton:
         for line in open(logfile, "rb"):
             line = polystr(line)
+            linecount += 1
             if verbose > DEBUG_PROGRESS:
-                print("Looking at: '%s'" % repr(line))
+                print("Looking at %d: %s" % (linecount, repr(line)))
             if state == 0:
                 if line == '\n':
                     state = 1
