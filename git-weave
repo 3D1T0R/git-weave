@@ -217,7 +217,7 @@ def git_weave(indir, outdir, quiet=False):
                             (authorname, authoremail, authordate) = [x.strip() for x in follower.replace('>','<').split('<')]
                             authordate = authordate.strip()
                     except ValueError:
-                        raise Fatal('"%s", line %d: ill-formed log entry' % (logfile, linecount))
+                        raise Fatal('%s:%d: ill-formed log entry' % (logfile, linecount))
             elif state == 1:
                 if line == ".\n":
                     if verbose > DEBUG_PROGRESS:
