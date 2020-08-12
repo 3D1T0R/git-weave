@@ -2,11 +2,11 @@
 
 test:
 	@echo "Testing git-weave: no output is good news."
-	@setpython python2
+	@./setpython python2
 	@make roundtrip
-	@setpython python3
+	@./setpython python3
 	@make roundtrip
-	@setpython python
+	@./setpython python
 
 roundtrip:
 	@for f in *.fi; \
