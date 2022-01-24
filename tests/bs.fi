@@ -18116,9 +18116,6 @@ Make a commit with a summary line,
 followed by a descriptor line after two newlines.
 from :161
 
-reset refs/heads/master
-from :162
-
 tag 2.8
 from :155
 tagger Eric S. Raymond <esr@thyrsus.com> 1287484438 -0400

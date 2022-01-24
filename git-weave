@@ -315,6 +315,7 @@ def git_ravel(indir, outdir, quiet=False):
             do_or_die("git reset --hard >/dev/null; git checkout master >/dev/null 2>&1")
         cooked = os.path.join(outdir, "log")
         body_latch = False
+        line=""
         try:
             with open(cooked, "wb") as wfp:
                 linecount = 0
