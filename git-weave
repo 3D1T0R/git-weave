@@ -15,6 +15,9 @@ SPDX-License-Identifier: BSD-2-Clause
 """
 from __future__ import print_function
 
+# pylint: disable=line-too-long,invalid-name,missing-function-docstring,no-else-return,no-else-raise,raise-missing-from.too-many-locals,too-many-nested-blocks,too-many-branches,too-many-statements,redefined-outer-name
+
+# pylint: disable=multiple-imports
 import sys, os, getopt, subprocess, time, tempfile
 
 version = "1.3"
@@ -23,17 +26,15 @@ DEBUG_GENERAL  = 1
 DEBUG_PROGRESS = 2
 DEBUG_COMMANDS = 3
 
-import io
-
 binary_encoding = 'latin-1'
 
 if str is bytes:  # Python 2
-    
+
     polystr = str
     polybytes = bytes
 
 else:  # Python 3
-    
+
     def polystr(o):
         if isinstance(o, str):
             return o
@@ -210,7 +211,7 @@ def git_weave(indir, outdir, quiet=False):
                         elif leader not in ("author", "committer", "tagger"):
                             raise Fatal("unexpected log attribute at %s" \
                                         % repr(line))
-                        elif leader == "committer" or leader == "tagger":
+                        elif leader in {"committer", "tagger"}:
                             (committername, committeremail, committerdate) = [x.strip() for x in follower.replace('>','<').split('<')]
                             committerdate = committerdate.strip()
                         elif leader == "author":
@@ -443,4 +444,3 @@ if __name__ == '__main__':
         pass
 
 # end
-
