@@ -35,7 +35,7 @@ uninstall:
 	-rmdir -p "$(target)/bin"
 
 pylint:
-	@pylint git-weave
+	@pylint --score=n git-weave
 
 check:
 	cd tests; $(MAKE) --quiet
