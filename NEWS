@@ -1,5 +1,8 @@
 			NEWS file for git-weave
 
+1.4: 2022-01-28::
+     Change shebang to Pyton 3, require by a recent Ubunto action.
+
 1.3: 2017-10-14
      Polyglotize the code and test under Python 3 as well as Python 2.
 

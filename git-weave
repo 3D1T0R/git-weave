@@ -20,7 +20,7 @@ SPDX-License-Identifier: BSD-2-Clause
 # pylint: disable=multiple-imports
 import sys, os, getopt, subprocess, time, tempfile
 
-version = "1.3"
+version = "1.4"
 
 DEBUG_GENERAL  = 1
 DEBUG_PROGRESS = 2
