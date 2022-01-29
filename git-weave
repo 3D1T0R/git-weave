@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 git-weave - assemble tree sequences into repository histories
 
@@ -13,7 +13,7 @@ Requires Python 2.6 (for the with statement).
 
 SPDX-License-Identifier: BSD-2-Clause
 """
-from __future__ import print_function
+
 
 # pylint: disable=line-too-long,invalid-name,missing-function-docstring,no-else-return,no-else-raise,raise-missing-from.too-many-locals,too-many-nested-blocks,too-many-branches,too-many-statements,redefined-outer-name
 
